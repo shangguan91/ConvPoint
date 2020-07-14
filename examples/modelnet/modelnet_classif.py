@@ -20,25 +20,24 @@ import torch.utils.data
 
 import utils.metrics as metrics
 
-def get_data(rootdir, files):
+def get_data(rootdir):
+  data = []
+  labels = []
+  files = os.listdir(rootdir)
+  for f in files:
+    if f[-3:] == "obj":
+        d = read_obj(rootdir  + f)
+        data.append(d.pos.numpy())
+    if f[5:10] == "Gotik":
 
-    train_filenames = []
-    for line in open(os.path.join(rootdir, files), "r"):
-        line = line.split("\n")[0]
-        line = os.path.basename(line)
-        train_filenames.append(os.path.join(rootdir, line))
+      labels.append("Gotik"),
 
-    data = []
-    labels = []
-    for filename in train_filenames:
-        f = h5py.File(filename, 'r')
-        data.append(f["data"])
-        labels.append(f["label"])
+    else:
+      labels.append("Romantik") 
+      
+    
 
-    data = np.concatenate(data, axis=0)
-    labels = np.concatenate(labels, axis=0)
-
-    return data, labels
+  return data, labels
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -116,14 +115,7 @@ def main():
 
     # modelnet40
     labels = [
-                "airplane", "bowl",     "desk",         "keyboard",     "person",
-                "sofa",     "tv_stand", "bathtub",      "car",          "door",
-                "lamp",     "piano",    "stairs",       "vase",         "bed",
-                "chair",    "dresser",  "laptop",       "plant",        "stool",
-                "wardrobe", "bench",    "cone",         "flower_pot",   "mantel",
-                "radio",    "table",    "xbox",         "bookshelf",    "cup",
-                "glass_box","monitor",  "range_hood",   "tent",         "bottle",
-                "curtain",  "guitar",   "night_stand",  "sink",         "toilet",
+                "Gotik", "Romantik,
                 ]
 
     # parameters for training
@@ -149,10 +141,10 @@ def main():
 
 
     print("Getting train files...")
-    train_data, train_labels = get_data(args.rootdir, "train_files.txt")
+    train_data, train_labels = get_data(args.rootdir+"/Train/")
     print(train_data.shape, train_labels.shape)
     print("Getting test files...")
-    test_data, test_labels = get_data(args.rootdir, "test_files.txt")
+    test_data, test_labels = get_data(args.rootdir+"/Validation/")
     print(test_data.shape, test_labels.shape)
     print("done")
 
