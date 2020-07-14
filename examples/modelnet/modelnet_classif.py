@@ -20,6 +20,29 @@ import torch.utils.data
 
 import utils.metrics as metrics
 
+def read_obj(in_file):
+    vertices = []
+    faces = []
+
+    for k, v in yield_file(in_file):
+        if k == 'v':
+            vertices.append(v)
+        elif k == 'f':
+            face = []
+            for i in v:
+                face.append(i[0])
+            faces.append(face)
+
+    if not len(faces) or not len(vertices):
+        return None
+    
+    pos = torch.tensor(vertices, dtype=torch.float)
+    face = torch.tensor(faces, dtype=torch.long).t().contiguous()
+
+    data = Data(pos=pos, face=face)
+
+    return data
+  
 def get_data(rootdir):
   data = []
   labels = []
