@@ -115,7 +115,7 @@ def main():
 
     # modelnet40
     labels = [
-                "Gotik", "Romantik,
+                "Gotik", "Romantik",
                 ]
 
     # parameters for training
