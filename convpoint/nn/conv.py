@@ -4,24 +4,30 @@ import torch.nn.functional as F
 import numpy as np
 import math
 
+#import knn model
 from global_tags import GlobalTags
 if GlobalTags.legacy_layer_base():
     from .legacy.layer_base import LayerBase
 else:
     from .layer_base import LayerBase
 
+#PtConv search and grab points with Knn method
 class PtConv(LayerBase):
+    # layer_base is class, sharing parameters with Layerbase
     def __init__(self, input_features, output_features, n_centers, dim, use_bias=True):
+        #under Class, there is init, 
         super(PtConv, self).__init__()
 
         # Weight
         self.weight = nn.Parameter(
                         torch.Tensor(input_features, n_centers, output_features), requires_grad=True)
+        #torch.Tensor
         bound = math.sqrt(3.0) * math.sqrt(2.0 / (input_features + output_features))
         self.weight.data.uniform_(-bound, bound)
 
         # bias
         self.use_bias = use_bias
+        #weight=slope, bias= b
         if use_bias:
             self.bias = nn.Parameter(torch.Tensor(output_features), requires_grad=True)
             self.bias.data.uniform_(0,0)
