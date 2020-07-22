@@ -22,13 +22,13 @@ import utils.metrics as metrics
 
 
 def get_data(rootdir, files):
-#read all file in rootdir
+#creating train_filenames by open and read train.txt 
     train_filenames = []
     for line in open(os.path.join(rootdir, files), "r"):
         line = line.split("\n")[0]
         line = os.path.basename(line)
         train_filenames.append(os.path.join(rootdir, line))
-#
+#unzip h5py files and get data and labels in dictionary.
     data = []
     labels = []
     for filename in train_filenames:
@@ -44,6 +44,7 @@ def get_data(rootdir, files):
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
+# define to normalize point cloud
 def pc_normalize(pc):
     l = pc.shape[0]
     centroid = np.mean(pc, axis=0)
@@ -52,7 +53,7 @@ def pc_normalize(pc):
     pc = pc / m
     return pc
 
-
+#create pclist of npoint=1024
 class PointCloudFileLists(torch.utils.data.Dataset):
     """Main Class for Image Folder loader."""
 
